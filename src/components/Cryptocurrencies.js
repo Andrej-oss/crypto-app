@@ -22,7 +22,6 @@ const Cryptocurrencies = ({simplified}) => {
   if (isFetching) {
     return "Loading...";
   }
-  console.log(cryptos);
   return (
       <div>
         { !simplified && <div className="search-crypto">
