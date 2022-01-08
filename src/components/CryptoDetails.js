@@ -15,7 +15,8 @@ import millify from "millify";
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 
-import { useGetCryptoDetailsQuery } from "../services/cryptoApi";
+import { useGetCryptoDetailsQuery, useGetCryptoHistoryQuery } from "../services/cryptoApi";
+import { LineChart } from "./index";
 
 const {
   Title,
@@ -32,7 +33,12 @@ const CryptoDetails = () => {
   console.log(data);
   const cryptoDetails = data && data.data && data.data.coin;
   const [timePeriod, setTimePeriod] = useState("7d");
+  const { data: coinHistory, isLoading } = useGetCryptoHistoryQuery({
+    coinId,
+    timePeriod
+  });
   console.log(coinId);
+  if (isFetching || isLoading) return "Loading...";
   const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
   const stats = [
@@ -108,6 +114,10 @@ const CryptoDetails = () => {
                   onChange={(vale) => setTimePeriod(vale)}>
             {time.map((time, i) => <Option key={i} value={time}>{time}</Option>)}
           </Select>
+          {cryptoDetails &&
+              <LineChart coinHistory={coinHistory}
+                         currentPrice={millify(cryptoDetails.price)}
+                         coinName={cryptoDetails.name}/>}
           <Col className="stats-container">
             <Col className="coin-value-statistics">
               <Col className="coin-value-statistics-heading">
